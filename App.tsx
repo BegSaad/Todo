@@ -1,11 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { Provider } from 'react-native-paper'
 
 const App = () => {
   return (
-    <View>
-      <Text>App</Text>
-    </View>
+   <Provider>
+    <Text>App</Text>
+   </Provider>
   )
 }
 

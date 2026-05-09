@@ -1,6 +1,4 @@
-const RootParamList={
-    Home:'Home',
-    AddTask:'AddTask',
-    EditTask:'EditTask'
+export type RootParamList = {
+    Login: undefined;
+    Signup: undefined;
 }
-export default RootParamList;

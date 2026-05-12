@@ -82,12 +82,14 @@ navigation.navigate("CreateTask")
             Don't have an account?
           </Text>
 
-          <Button mode="text" onPress={() => {}}>
+          <Button mode="text" onPress={() => {
+            navigation.navigate("Signup")
+          }}>
             Sign Up
           </Button>
         </View>
 
-        <Divider style={styles.divider} />
+        {/* <Divider style={styles.divider} /> */}
 
         <Button
           mode="outlined"

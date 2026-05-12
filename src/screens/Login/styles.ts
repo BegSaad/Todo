@@ -11,25 +11,28 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    justifyContent: 'space-between',
     paddingHorizontal: moderateScale(20),
-    paddingVertical: verticalScale(30),
     backgroundColor: '#fff',
   },
 
   topContainer: {
     marginTop: hp(5),
+    //backgroundColor: '#52539a',
+    padding: moderateScale(10),
+    borderRadius: moderateScale(12),
   },
 
   logo: {
     textAlign: 'center',
+    marginTop:verticalScale(20),
     marginBottom: verticalScale(40),
     fontSize: textScale(28),
     fontWeight: '700',
+    color: '#fff',
   },
 
   input: {
-    marginBottom: verticalScale(18),
+    marginBottom: verticalScale(8),
     backgroundColor: '#fff',
   },
 
@@ -47,14 +50,18 @@ const styles = StyleSheet.create({
   },
 
   bottomContainer: {
+    //marginTop: verticalScale(10),
     marginBottom: hp(2),
+   // backgroundColor: '#11953f',
+    padding: moderateScale(15),
+    borderRadius: moderateScale(12),
   },
 
   row: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: verticalScale(20),
+    marginBottom: verticalScale(10),
   },
 
   divider: {

@@ -5,6 +5,7 @@ import {
   TextInput,
   Button,
   Divider,
+  Icon,
 } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 
@@ -28,7 +29,7 @@ const navigation = useNavigation<NavigationProp>();
       {/* TOP SECTION */}
       <View style={styles.topContainer}>
 
-        <Text variant="headlineMedium" style={styles.logo}>
+        <Text style={styles.logo}>
           TODO
         </Text>
 
@@ -58,7 +59,7 @@ const navigation = useNavigation<NavigationProp>();
           style={styles.loginBtn}
           contentStyle={styles.btnContent}
           onPress={() => {
-navigation.navigate("CreateTask")
+navigation.navigate("Tasks")
           }}
         >
           Login

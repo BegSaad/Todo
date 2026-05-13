@@ -4,6 +4,7 @@ import { Provider } from 'react-native-paper'
 import MyStack from './src/navigation/Mystack'
 import { NavigationContainer } from '@react-navigation/native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
  
 
 const App = () => {

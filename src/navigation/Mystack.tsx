@@ -5,6 +5,7 @@ import { RootParamList } from "../utils/RootParamList";
 import Login from "../screens/Login/Login";
 import SignUp from "../screens/SignUp/Signup";
 import CreateTask from "../screens/CreateTask/CreateTask";
+import Tasks from "../screens/Tasks/Tasks";
 
 const Stack = createNativeStackNavigator<RootParamList>();
 
@@ -14,13 +15,13 @@ const MyStack = () => {
     screenOptions={{
         headerShown: false,
         animation: 'flip',
-        presentation: 'modal',
+      
     }}  
     >
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Signup" component={SignUp} />
            <Stack.Screen name="CreateTask" component={CreateTask} />
-  
+           <Stack.Screen name = "Tasks" component={Tasks} /> 
     </Stack.Navigator>
   );
 };

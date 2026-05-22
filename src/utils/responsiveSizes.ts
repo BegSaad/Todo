@@ -1,95 +1,95 @@
-import { Dimensions, PixelRatio, Platform, StatusBar } from 'react-native'
-const { width, height } = Dimensions.get('window')
-const guidelineBaseWidth = 350
-const guidelineBaseHeight = 812
+import { Dimensions, PixelRatio, Platform, StatusBar } from 'react-native';
 
-// Ipad device identify
-export const isiPAD = height / width < 1.6
+const guidelineBaseWidth = 350;
+const guidelineBaseHeight = 812;
 
-// Tablet device identify
-export const isTablet = height / width < 1.6
+// ✅ Always read fresh dimensions — never cache at module level
+const getDimensions = () => Dimensions.get('window');
 
-// Platform IOS Identify
-export const isIOS = Platform.OS === 'ios'
+// ─── Device Type Checks (safe to cache — never change at runtime) ───────────
+const { width: initialWidth, height: initialHeight } = Dimensions.get('window');
 
-// Platform Android Identify
-export const isAndroid = Platform.OS === 'android'
+export const isiPAD = initialHeight / initialWidth < 1.6;
+export const isTablet = initialHeight / initialWidth < 1.6;
+export const isIOS = Platform.OS === 'ios';
+export const isAndroid = Platform.OS === 'android';
 
-// Identify notch in IOS Device
-export const isIphoneXorAbove = () => {
+export const isIphoneXorAbove = (): boolean => {
+  const { width: w, height: h } = getDimensions();
   return (
     Platform.OS === 'ios' &&
     !Platform.isPad &&
     !Platform.isTV &&
-    (height === 812 ||
-      width === 812 ||
-      height === 896 ||
-      width === 896 ||
-      width === 390 ||
-      height === 844 ||
-      width === 390 ||
-      height === 852 ||
-      width === 428 ||
-      height === 926 ||
-      width === 428 ||
-      height === 932)
-  )
-}
-export const isX = isIphoneXorAbove()
+    (h === 812 || w === 812 ||
+     h === 896 || w === 896 ||
+     w === 390 || h === 844 ||
+     h === 852 || w === 428 ||
+     h === 926 || h === 932)
+  );
+};
 
-// (Number) Will return a linear scaled result of the provided size, based on your device's screen width.
-const scale = (size: number) => (width / guidelineBaseWidth) * size
+export const isX = isIphoneXorAbove();
 
-// (Number) Will return a linear scaled result of the provided size, based on your device's screen height.
-const verticalScale = (size: number) => (height / guidelineBaseHeight) * size
+// ─── Scaling Functions (always use live dimensions) ─────────────────────────
 
-// (Number) If normal scale will increase your size by +2X, moderateScale will only increase it by +X
-const moderateScale = (size: number, factor = 0.5) =>
-  size + (scale(size) - size) * factor
+export const scale = (size: number): number => {
+  const { width } = getDimensions();
+  return (width / guidelineBaseWidth) * size;
+};
 
-// (Number) Same as moderateScale, but using verticalScale instead of scale
-const moderateScaleVertical = (size: number, factor = 0.5) =>
-  size + (verticalScale(size) - size) * factor
+export const verticalScale = (size: number): number => {
+  const { height } = getDimensions();
+  return (height / guidelineBaseHeight) * size;
+};
 
-// Use for fontSize
-const textScale = (fontSize: number, standardScreenHeight = 680) => {
-  const standardLength = width > height ? width : height
+export const moderateScale = (size: number, factor = 0.5): number =>
+  size + (scale(size) - size) * factor;
+
+export const moderateScaleVertical = (size: number, factor = 0.5): number =>
+  size + (verticalScale(size) - size) * factor;
+
+export const textScale = (
+  fontSize: number,
+  standardScreenHeight = 680
+): number => {
+  const { width, height } = getDimensions();
+  const standardLength = width > height ? width : height;
   const offset =
-    width > height ? 0 : Platform.OS === 'ios' ? 78 : StatusBar.currentHeight
-
+    width > height
+      ? 0
+      : Platform.OS === 'ios'
+      ? 78
+      : StatusBar.currentHeight ?? 0;
   const deviceHeight =
     isIphoneXorAbove() || Platform.OS === 'android'
-      ? standardLength - Number(offset)
-      : standardLength
+      ? standardLength - offset
+      : standardLength;
+  const heightPercent = (fontSize * deviceHeight) / standardScreenHeight;
+  return Math.round(heightPercent);
+};
 
-  const heightPercent = (fontSize * deviceHeight) / standardScreenHeight
-  return Math.round(heightPercent)
-}
-
-// wp(80) -> 80% of width device screen
-const wp = (widthPercent: string | number) => {
+export const wp = (widthPercent: string | number): number => {
+  const { width } = getDimensions();
   const elemWidth =
-    typeof widthPercent === 'number' ? widthPercent : parseFloat(widthPercent)
-  return PixelRatio.roundToNearestPixel((width * elemWidth) / 100)
-}
+    typeof widthPercent === 'number' ? widthPercent : parseFloat(widthPercent);
+  return PixelRatio.roundToNearestPixel((width * elemWidth) / 100);
+};
 
-// hp(80) -> 80% of height device screen
-const hp = (heightPercent: string | number) => {
+export const hp = (heightPercent: string | number): number => {
+  const { height } = getDimensions();
   const elemHeight =
     typeof heightPercent === 'number'
       ? heightPercent
-      : parseFloat(heightPercent)
-  return PixelRatio.roundToNearestPixel((height * elemHeight) / 100)
-}
+      : parseFloat(heightPercent);
+  return PixelRatio.roundToNearestPixel((height * elemHeight) / 100);
+};
 
-export {
-  scale,
-  verticalScale,
-  textScale,
-  moderateScale,
-  moderateScaleVertical,
-  width,
-  height,
-  wp,
-  hp,
-}
+// ✅ Convenience getter for current orientation
+export const isLandscape = (): boolean => {
+  const { width, height } = getDimensions();
+  return width > height;
+};
+
+// ✅ Re-export live width/height as functions, not frozen values
+export const getWidth = (): number => getDimensions().width;
+export const getHeight = (): number => getDimensions().height;

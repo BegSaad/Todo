@@ -1,79 +1,98 @@
 import { StyleSheet } from 'react-native'
+import { useWindowDimensions } from 'react-native'
 import {
   moderateScale,
   verticalScale,
   textScale,
   hp,
-  wp,
-} from '../../utils'
+} from '../../utils/responsiveSizes'
+import { isLandscape as getIsLandscape } from '../../utils/responsiveSizes'
 
-const styles = StyleSheet.create({
+export const useLoginStyles = () => {
+  useWindowDimensions() // ✅ re-renders this hook on rotation
 
-  container: {
-    flex: 1,
-    paddingHorizontal: moderateScale(20),
-    backgroundColor: '#fff',
-  },
+  const landscape = getIsLandscape()
 
-  topContainer: {
-    marginTop: hp(5),
-    //backgroundColor: '#52539a',
-    padding: moderateScale(10),
-    borderRadius: moderateScale(12),
-  },
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
 
-  logo: {
-    textAlign: 'center',
-    marginTop:verticalScale(20),
-    marginBottom: verticalScale(40),
-    fontSize: textScale(28),
-    fontWeight: '700',
-    color: '#fff',
-  },
+    contentContainer: {
+      flexGrow: 1,
+      justifyContent: landscape ? 'flex-start' : 'center',
+      paddingHorizontal: moderateScale(landscape ? 40 : 20),
+      paddingVertical: verticalScale(landscape ? 10 : 20),
+    },
 
-  input: {
-    marginBottom: verticalScale(8),
-    backgroundColor: '#fff',
-  },
+    // ── Landscape wrapper puts top + bottom side by side ──────────
+    landscapeWrapper: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      gap: moderateScale(20),
+    },
 
-  loginBtn: {
-    marginTop: verticalScale(10),
-    borderRadius: moderateScale(10),
-  },
+    topContainer: {
+      padding: moderateScale(10),
+    },
 
-  btnContent: {
-    height: verticalScale(50),
-  },
+    // In landscape, each column takes 50% width
+    topContainerLandscape: {
+      flex: 1,
+      marginTop: verticalScale(140),
+    },
 
-  forgotText: {
-    fontSize: textScale(13),
-  },
+    logo: {
+      textAlign: 'center',
+      marginBottom: verticalScale(landscape ? 12 : 35),
+      fontSize: textScale(30),
+      fontWeight: '700',
+      color: '#000',
+    },
 
-  bottomContainer: {
-    //marginTop: verticalScale(10),
-    marginBottom: hp(2),
-   // backgroundColor: '#11953f',
-    padding: moderateScale(15),
-    borderRadius: moderateScale(12),
-  },
+    input: {
+      marginBottom: verticalScale(12),
+      backgroundColor: '#fff',
+    },
 
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: verticalScale(10),
-  },
+    loginBtn: {
+      marginTop: verticalScale(10),
+      borderRadius: moderateScale(10),
+    },
 
-  divider: {
-    marginBottom: verticalScale(20),
-  },
+    btnContent: {
+      minHeight: landscape ? 40 : 50,
+    },
 
-  socialBtn: {
-    marginBottom: verticalScale(15),
-    borderRadius: moderateScale(10),
-    paddingVertical: verticalScale(4),
-  },
+    forgotText: {
+      fontSize: textScale(13),
+    },
 
-})
+    bottomContainer: {
+      marginTop: verticalScale(landscape ? 0 : 20),
+      marginBottom: hp(2),
+    },
 
-export default styles
+    // In landscape, social buttons sit in second column
+    bottomContainerLandscape: {
+      flex: 1,
+      marginTop: verticalScale(180),
+      justifyContent: 'center',
+    },
+
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: verticalScale(15),
+    },
+
+    socialBtn: {
+      marginBottom: verticalScale(15),
+      borderRadius: moderateScale(10),
+      paddingVertical: verticalScale(4),
+    },
+  })
+}

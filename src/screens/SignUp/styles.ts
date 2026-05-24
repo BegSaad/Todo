@@ -6,8 +6,12 @@ import {
   hp,
   wp,
 } from '../../utils'
+import { isLandscape as getIsLandscape } from '../../utils/responsiveSizes'
+export const useSignUpStyles =()=>{
 
-const styles = StyleSheet.create({
+  const landscape = getIsLandscape()
+
+return StyleSheet.create({
 
   container: {
     flex: 1,
@@ -17,7 +21,7 @@ const styles = StyleSheet.create({
 
   topContainer: {
     marginTop: hp(5),
-    //backgroundColor: '#52539a',
+    
     padding: moderateScale(10),
     borderRadius: moderateScale(12),
   },
@@ -32,7 +36,7 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    marginBottom: verticalScale(8),
+    marginBottom: verticalScale(12),
     backgroundColor: '#fff',
   },
 
@@ -50,9 +54,9 @@ const styles = StyleSheet.create({
   },
 
   bottomContainer: {
-    //marginTop: verticalScale(10),
+  
     marginBottom: hp(2),
-   // backgroundColor: '#11953f',
+  
     padding: moderateScale(15),
     borderRadius: moderateScale(12),
   },
@@ -76,4 +80,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default styles
+}

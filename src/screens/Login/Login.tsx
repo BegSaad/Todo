@@ -72,7 +72,9 @@ const Login = () => {
               mode="contained"
               style={styles.loginBtn}
               contentStyle={styles.btnContent}
-              onPress={() => navigation.navigate('Tasks')}
+              onPress={() => {navigation.navigate('Tasks')
+                console.log('Login pressed with:', { email, password })
+              }}
             >
               Login
             </Button>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { View ,Alert} from 'react-native'
+import { View ,Alert, useWindowDimensions} from 'react-native'
 
 import {
   TextInput,
@@ -9,10 +9,16 @@ import {
 
 import { Formik } from 'formik'
 
-import styles from './styles'
+import { useSignUpStyles } from './styles'
 import validationSchema from '../../utils/validationSchema'
+import { useLoginStyles } from '../Login/styles'
 
 const Signup = () => {
+    const { width, height } = useWindowDimensions()
+    const isLandscape = width > height
+  
+    // ✅ Dynamic styles — recalculates on every rotation
+    const styles = useLoginStyles()
   return (
     <View style={styles.container}>
       <Formik

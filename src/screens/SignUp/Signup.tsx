@@ -1,156 +1,128 @@
 import React from 'react'
-import { View ,Alert, useWindowDimensions} from 'react-native'
-
-import {
-  TextInput,
-  Button,
-  HelperText,
-} from 'react-native-paper'
-
+import { View, Alert, useWindowDimensions, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
+import { TextInput, Button, HelperText, Text } from 'react-native-paper'
 import { Formik } from 'formik'
-
 import { useSignUpStyles } from './styles'
 import validationSchema from '../../utils/validationSchema'
-import { useLoginStyles } from '../Login/styles'
 
 const Signup = () => {
-    const { width, height } = useWindowDimensions()
-    const isLandscape = width > height
-  
-    // ✅ Dynamic styles — recalculates on every rotation
-    const styles = useLoginStyles()
+  const { width, height } = useWindowDimensions()
+  const isLandscape = width > height
+  const styles = useSignUpStyles()
+
   return (
-    <View style={styles.container}>
-      <Formik
-        initialValues={{
-          name: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-        }}
-        validationSchema={validationSchema}
-       onSubmit={(values, { resetForm }) => {
-  console.log(values)
-
-  Alert.alert(
-    'Success',
-    'Registration Successful'
-  )
-
-  resetForm()
-}}
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView
+        contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-        }) => (
-          <View>
+        <Formik
+          initialValues={{ name: '', email: '', password: '', confirmPassword: '' }}
+          validationSchema={validationSchema}
+          onSubmit={(values, { resetForm }) => {
+            console.log(values)
+            Alert.alert('Success', 'Registration Successful')
+            resetForm()
+          }}
+        >
+          {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
 
-            {/* Name */}
+            <View>
+              {/* Heading — always full width on top */}
+              <Text style={styles.heading}>Register New User</Text>
 
-            <TextInput
-              label="Name"
-              mode="outlined"
-              style={styles.input}
-              onChangeText={handleChange('name')}
-              onBlur={handleBlur('name')}
-              value={values.name}
-              error={!!(touched.name && errors.name)}
-            />
+              <View style={isLandscape ? styles.landscapeWrapper : undefined}>
 
-            <HelperText
-              type="error"
-              visible={!!(touched.name && errors.name)}
-            >
-              {errors.name}
-            </HelperText>
+                {/* LEFT / TOP — Name + Email */}
+                <View style={isLandscape ? styles.topContainerLandscape : styles.topContainer}>
 
-            {/* Email */}
+                  <TextInput
+                    label="Name"
+                    mode="outlined"
+                    style={styles.input}
+                    onChangeText={handleChange('name')}
+                    theme={{ roundness: 10 }} 
+                    onBlur={handleBlur('name')}
+                    value={values.name}
+                    error={!!(touched.name && errors.name)}
+                  />
+                  <HelperText type="error" visible={!!(touched.name && errors.name)}>
+                    {errors.name}
+                  </HelperText>
 
-            <TextInput
-              label="Email"
-              mode="outlined"
-              style={styles.input}
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
-              value={values.email}
-              error={!!(touched.email && errors.email)}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
+                  <TextInput
+                    label="Email"
+                    mode="outlined"
+                    style={styles.input}
+                    theme={{ roundness: 10 }} 
+                    onChangeText={handleChange('email')}
+                    onBlur={handleBlur('email')}
+                    value={values.email}
+                    error={!!(touched.email && errors.email)}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                  <HelperText type="error" visible={!!(touched.email && errors.email)}>
+                    {errors.email}
+                  </HelperText>
 
-            <HelperText
-              type="error"
-              visible={!!(touched.email && errors.email)}
-            >
-              {errors.email}
-            </HelperText>
+                </View>
 
-            {/* Password */}
+                {/* RIGHT / BOTTOM — Password + Confirm + Register */}
+                <View style={isLandscape ? styles.bottomContainerLandscape : styles.bottomContainer}>
 
-            <TextInput
-              label="Password"
-              mode="outlined"
-              style={styles.input}
-              onChangeText={handleChange('password')}
-              onBlur={handleBlur('password')}
-              value={values.password}
-              error={!!(touched.password && errors.password)}
-              secureTextEntry
-            />
+                  <TextInput
+                    label="Password"
+                    mode="outlined"
+                    theme={{ roundness: 10 }} 
+                    style={styles.input}
+                    onChangeText={handleChange('password')}
+                    onBlur={handleBlur('password')}
+                    value={values.password}
+                    error={!!(touched.password && errors.password)}
+                    secureTextEntry
+                  />
+                  <HelperText type="error" visible={!!(touched.password && errors.password)}>
+                    {errors.password}
+                  </HelperText>
 
-            <HelperText
-              type="error"
-              visible={!!(touched.password && errors.password)}
-            >
-              {errors.password}
-            </HelperText>
+                  <TextInput
+                    label="Confirm Password"
+                    mode="outlined"
+                    theme={{ roundness: 10 }} 
+                    style={styles.input}
+                    onChangeText={handleChange('confirmPassword')}
+                    onBlur={handleBlur('confirmPassword')}
+                    value={values.confirmPassword}
+                    error={!!(touched.confirmPassword && errors.confirmPassword)}
+                    secureTextEntry
+                  />
+                  <HelperText type="error" visible={!!(touched.confirmPassword && errors.confirmPassword)}>
+                    {errors.confirmPassword}
+                  </HelperText>
 
-            {/* Confirm Password */}
+                  <Button
+                    mode="contained"
+                    style={styles.loginBtn}
+                    contentStyle={styles.btnContent}
+                    onPress={handleSubmit}
+                  >
+                    Register
+                  </Button>
 
-            <TextInput
-              label="Confirm Password"
-              mode="outlined"
-              style={styles.input}
-              onChangeText={handleChange('confirmPassword')}
-              onBlur={handleBlur('confirmPassword')}
-              value={values.confirmPassword}
-              error={!!(
-                touched.confirmPassword &&
-                errors.confirmPassword
-              )}
-              secureTextEntry
-            />
+                </View>
 
-            <HelperText
-              type="error"
-              visible={!!(
-                touched.confirmPassword &&
-                errors.confirmPassword
-              )}
-            >
-              {errors.confirmPassword}
-            </HelperText>
+              </View>
+            </View>
 
-            {/* Submit Button */}
-
-            <Button
-              mode="contained"
-              style={styles.loginBtn}
-              contentStyle={styles.btnContent}
-              onPress={handleSubmit}
-            >
-              Register
-            </Button>
-
-          </View>
-        )}
-      </Formik>
-    </View>
+          )}
+        </Formik>
+      </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 

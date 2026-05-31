@@ -1,50 +1,138 @@
-import React, { useState } from 'react'
-import { View , FlatList} from 'react-native'
+import React from 'react'
+import {
+  View,
+  FlatList,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  useWindowDimensions,
+  TouchableOpacity,
+} from 'react-native'
 import {
   Text,
-  TextInput,
-  Button,
-  Divider,
-  Icon,
+  Card,
+  IconButton,
 } from 'react-native-paper'
+import { FAB } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
-
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 
-import AntDesign from 'react-native-vector-icons/AntDesign';
-
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import styles from './styles'
 import { RootParamList } from '../../utils/RootParamList'
-
+import useTasksApi from './useTasksApi'
+import { useTasksStyles } from './styles'
 
 const Tasks = () => {
-type NavigationProp = NativeStackNavigationProp<RootParamList>;
+  type NavigationProp = NativeStackNavigationProp<RootParamList>
 
-const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<NavigationProp>()
 
+  const { tasks } = useTasksApi()
 
-  {/* a long add button
-here will be cards where all the tasks will be shown and delete and edit icon on each card */}
+  const { width, height } = useWindowDimensions()
+  const isLandscape = width > height
+
+  const styles = useTasksStyles()
+
+  const deleteTask = (id: number) => {
+    console.log('Delete task', id)
+  }
+
+  const renderTask = ({ item }: any) => (
+    <TouchableOpacity
+      
+    >
+      <Card style={styles.card}>
+        <Card.Content style={styles.cardContent}>
+          <View style={styles.textContainer}>
+            <Text variant="titleMedium">
+              {item.title}
+            </Text>
+
+            <Text
+              variant="bodyMedium"
+              style={styles.description}
+            >
+              {item.description}
+            </Text>
+          </View>
+
+          <IconButton
+            icon="delete-outline"
+            onPress={() => deleteTask(item.id)}
+          />
+        </Card.Content>
+      </Card>
+    </TouchableOpacity>
+  )
+
   return (
-    <View style={styles.container}> 
-      <Text> My Tasks</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={
+        Platform.OS === 'ios'
+          ? 'padding'
+          : undefined
+      }
+    >
+      <ScrollView
+        contentContainerStyle={
+          styles.contentContainer
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        <View
+          style={
+            isLandscape
+              ? styles.landscapeWrapper
+              : undefined
+          }
+        >
+          <View
+            style={[
+              styles.topContainer,
+              isLandscape &&
+                styles.topContainerLandscape,
+            ]}
+          >
+            <Text style={styles.title}>
+              My Tasks
+            </Text>
 
+            {tasks.length === 0 ? (
+              <View style={styles.emptyContainer}>
+                <AntDesign
+                  name="questioncircleo"
+                  size={80}
+                  color="#999"
+                />
 
+                <Text style={styles.emptyText}>
+                  No Tasks Yet
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                scrollEnabled={false}
+                data={tasks}
+                keyExtractor={item =>
+                  item.id.toString()
+                }
+                renderItem={renderTask}
+              />
+            )}
+          </View>
+        </View>
+      </ScrollView>
 
-        <Button
-                mode="outlined"
-                
-                style={styles.socialBtn}
-                onPress={() => {
-                  navigation.navigate("CreateTask")
-                }}
->
-                +
-              </Button>
-
-
-    </View>
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        onPress={() =>
+          navigation.navigate('CreateTask')
+        }
+      />
+    </KeyboardAvoidingView>
   )
 }
 

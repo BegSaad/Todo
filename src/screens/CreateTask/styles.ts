@@ -1,80 +1,97 @@
 import { StyleSheet } from 'react-native'
+import { useWindowDimensions } from 'react-native'
+
 import {
   moderateScale,
   verticalScale,
   textScale,
   hp,
-  wp,
 } from '../../utils'
 
-const styles = StyleSheet.create({
+import { isLandscape as getIsLandscape } from '../../utils/responsiveSizes'
 
-  container: {
-    flex: 1,
-    paddingHorizontal: moderateScale(20),
-    backgroundColor: '#fff',
-    marginTop: hp(10),
-  },
+export const useCreateTaskStyles = () => {
+  useWindowDimensions()
 
-  topContainer: {
-    marginTop: hp(5),
-    //backgroundColor: '#52539a',
-    padding: moderateScale(10),
-    borderRadius: moderateScale(12),
-  },
+  const landscape = getIsLandscape()
 
-  logo: {
-    textAlign: 'center',
-    marginTop:verticalScale(20),
-    marginBottom: verticalScale(40),
-    fontSize: textScale(28),
-    fontWeight: '700',
-    color: '#fff',
-  },
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
 
-  input: {
-    marginBottom: verticalScale(8),
-    backgroundColor: '#fff',
-  },
+    contentContainer: {
+      flexGrow: 1,
+      paddingHorizontal: moderateScale(
+        landscape ? 40 : 20
+      ),
+      paddingVertical: verticalScale(
+        landscape ? 10 : 20
+      ),
+      justifyContent: landscape
+        ? 'flex-start'
+        : 'center',
+    },
 
-  loginBtn: {
-    marginTop: verticalScale(10),
-    borderRadius: moderateScale(10),
-  },
+    landscapeWrapper: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      gap: moderateScale(25),
+      marginTop: verticalScale(20),
+    },
 
-  btnContent: {
-    height: verticalScale(50),
-  },
+    leftContainer: {
+      flex: 1,
+    },
 
-  forgotText: {
-    fontSize: textScale(13),
-  },
+    rightContainer: {
+      flex: 1,
+    },
 
-  bottomContainer: {
-    //marginTop: verticalScale(10),
-    marginBottom: hp(2),
-   // backgroundColor: '#11953f',
-    padding: moderateScale(15),
-    borderRadius: moderateScale(12),
-  },
+    leftContainerLandscape: {
+      flex: 1,
+    },
 
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: verticalScale(10),
-  },
+    rightContainerLandscape: {
+      flex: 1,
+      justifyContent: 'center',
+      marginTop: verticalScale(80),
+    },
 
-  divider: {
-    marginBottom: verticalScale(20),
-  },
+    heading: {
+      textAlign: 'center',
+      fontSize: textScale(30),
+      fontWeight: '700',
+      color: '#000',
+      marginTop: hp(3),
+      marginBottom: verticalScale(30),
+    },
 
-  socialBtn: {
-    marginBottom: verticalScale(15),
-    borderRadius: moderateScale(10),
-    paddingVertical: verticalScale(4),
-  },
+    input: {
+      marginBottom: verticalScale(15),
+      backgroundColor: '#fff',
+    },
 
-})
+    descriptionInput: {
+      backgroundColor: '#fff',
+      minHeight: verticalScale(140),
+    },
 
-export default styles
+    label: {
+      fontSize: textScale(16),
+      fontWeight: '600',
+      marginBottom: verticalScale(10),
+      marginTop: verticalScale(5),
+    },
+
+    createBtn: {
+      marginTop: verticalScale(30),
+      borderRadius: moderateScale(10),
+    },
+
+    btnContent: {
+      minHeight: verticalScale(50),
+    },
+  })
+}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React ,{ useEffect}from 'react'
 import {
   View,
   FlatList,
@@ -21,24 +21,24 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import { RootParamList } from '../../utils/RootParamList'
 import useTasksApi from './useTasksApi'
 import { useTasksStyles } from './styles'
+import axios from 'axios'
 
 const Tasks = () => {
   type NavigationProp = NativeStackNavigationProp<RootParamList>
 
   const navigation = useNavigation<NavigationProp>()
 
-  const { tasks } = useTasksApi()
+  const { tasks , deleteTask} = useTasksApi()
 
   const { width, height } = useWindowDimensions()
   const isLandscape = width > height
 
   const styles = useTasksStyles()
+ 
 
-  const deleteTask = (id: number) => {
-    console.log('Delete task', id)
-  }
+  
 
-  const renderTask = ({ item }: any) => (
+  const renderTask = ({ item }: { item: any }) => (
     <TouchableOpacity
       
     >

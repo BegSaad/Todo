@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import {
   View,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
   useWindowDimensions,
 } from 'react-native'
 
@@ -15,19 +16,66 @@ import {
 } from 'react-native-paper'
 
 import { useCreateTaskStyles } from './styles'
+import axios from 'axios'
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+
 
 const CreateTask = () => {
+
+  const readData = async ()=>{
+  const response = await axios.get('https://todobackenefone.onrender.com/api/createtask/read')
+  console.log(response.data);
+}
+
+const postData = async () => {
+  try {
+    const response = await axios.post(
+      "https://todobackenefone.onrender.com/api/createtask/post",
+      {
+        taskName: formData.taskName,
+        taskDescription: formData.taskDescription   ,
+        dueDate: formData.dueDate,
+        priority: formData.priority,
+      }
+    );
+
+    console.log(response.data);
+    Alert.alert("Success", "Task created successfully");
+     setFormData({
+      taskName: "",
+      taskDescription: "",
+      dueDate: "",
+      priority: "medium",
+    });
+  } catch (error:any) {
+    console.log(error.response?.data);
+  }
+};
+
+
+useEffect(()=>{
+    readData()
+   
+    
+
+  },[])
   const styles = useCreateTaskStyles()
 
   const { width, height } = useWindowDimensions()
   const isLandscape = width > height
 
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [dueDate, setDueDate] = useState('')
-  const [priority, setPriority] = useState('medium')
+  
 
+  const [formData, setFormData] = useState({
+  taskName: "",
+  taskDescription: "",
+  dueDate: "",
+  priority: "medium",
+});
+const [showDateTimePicker, setShowDateTimePicker]= useState(false)
   return (
+    
     <KeyboardAvoidingView
       style={styles.container}
       behavior={
@@ -36,6 +84,31 @@ const CreateTask = () => {
           : undefined
       }
     >
+      {showDateTimePicker && (
+  <DateTimePicker
+    value={
+      formData.dueDate
+        ? new Date(formData.dueDate)
+        : new Date()
+    }
+    mode="date"
+    display="default"
+    onChange={(event, selectedDate) => {
+      setShowDateTimePicker(false);
+
+      if (selectedDate) {
+        const formattedDate = selectedDate
+          .toISOString()
+          .split("T")[0];
+
+        setFormData({
+          ...formData,
+          dueDate: formattedDate,
+        });
+      }
+    }}
+  />
+)}
       <ScrollView
         contentContainerStyle={
           styles.contentContainer
@@ -65,8 +138,8 @@ const CreateTask = () => {
             <TextInput
               label="Task Title"
               mode="outlined"
-              value={title}
-              onChangeText={setTitle}
+              value={formData.taskName    }
+              onChangeText={(text) => setFormData({...formData, taskName: text})}
               style={styles.input}
               left={
                 <TextInput.Icon icon="format-title" />
@@ -76,8 +149,8 @@ const CreateTask = () => {
             <TextInput
               label="Task Description"
               mode="outlined"
-              value={description}
-              onChangeText={setDescription}
+              value={formData.taskDescription}
+              onChangeText={(text) => setFormData({...formData, taskDescription: text})}
               multiline
               numberOfLines={6}
               style={styles.descriptionInput}
@@ -105,25 +178,26 @@ const CreateTask = () => {
                 styles.rightContainerLandscape,
             ]}
           >
-            <TextInput
+           <TextInput
               label="Due Date"
               mode="outlined"
-              value={dueDate}
-              onChangeText={setDueDate}
+              value={formData.dueDate}
+              onChangeText={(text) => setFormData({...formData, dueDate: text})}
               placeholder="DD/MM/YYYY"
               style={styles.input}
               left={
                 <TextInput.Icon icon="calendar" />
               }
-            />
+            /> 
+          
 
             <Text style={styles.label}>
               Priority
             </Text>
 
             <SegmentedButtons
-              value={priority}
-              onValueChange={setPriority}
+              value={formData.priority}
+              onValueChange={(value) => setFormData({...formData, priority: value})}
               buttons={[
                 {
                   value: 'low',
@@ -144,6 +218,11 @@ const CreateTask = () => {
               mode="contained"
               style={styles.createBtn}
               contentStyle={styles.btnContent}
+              onPress={() => {
+                postData()
+                console.log("button is pressed")
+            
+              }}
             >
               Create Task
             </Button>
@@ -151,7 +230,9 @@ const CreateTask = () => {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    
   )
+  
 }
 
 export default CreateTask

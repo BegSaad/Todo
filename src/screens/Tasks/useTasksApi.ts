@@ -1,19 +1,46 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+
 const useTasksApi = () => {
-  const tasks = [
-    {
-      id: 1,
-      title: 'Buy Milk',
-      description: 'Get milk from the store',
-    },
-    {
-      id: 2,
-      title: 'Study React Native',
-      description: 'Learn FlatList',
-    },
-  ];
+  const [tasks, setTasks] = useState([]);
+
+ useEffect(() => {
+  readTasks();
+}, []);
+
+  const readTasks = async () => {
+    try {
+      const response = await axios.get(
+        "https://todobackenefone.onrender.com/api/createtask/read"
+      );
+
+      const formattedTasks = response.data.data.map((task: any) => ({
+        id: task._id,
+        title: task.taskName,
+        description: task.taskDescription,
+      }));
+
+      setTasks(formattedTasks);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteTask = (id: string) => {
+
+try{
+    axios.delete(`https://todobackenefone.onrender.com/api/createtask/delete/${id}`
+    );
+    // setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));  
+}
+catch(error){
+  console.log(error)
+}
+  };
 
   return {
     tasks,
+    deleteTask,
   };
 };
 

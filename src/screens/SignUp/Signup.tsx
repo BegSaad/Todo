@@ -4,8 +4,19 @@ import { TextInput, Button, HelperText, Text } from 'react-native-paper'
 import { Formik } from 'formik'
 import { useSignUpStyles } from './styles'
 import validationSchema from '../../utils/validationSchema'
+import useSignUpApi from './useSignUpApi'
 
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootParamList } from '../../utils/RootParamList'
 const Signup = () => {
+  
+  
+  
+ type NavigationProp = NativeStackNavigationProp<RootParamList>
+  const navigation = useNavigation<NavigationProp>()
+  //
+  const {signUp}=  useSignUpApi()
   const { width, height } = useWindowDimensions()
   const isLandscape = width > height
   const styles = useSignUpStyles()
@@ -23,11 +34,35 @@ const Signup = () => {
         <Formik
           initialValues={{ name: '', email: '', password: '', confirmPassword: '' }}
           validationSchema={validationSchema}
-          onSubmit={(values, { resetForm }) => {
-            console.log(values)
-            Alert.alert('Success', 'Registration Successful')
-            resetForm()
-          }}
+          // onSubmit={(values, { resetForm }) => {
+          //   console.log(values)
+          //   Alert.alert('Success', 'Registration Successful')
+          //   resetForm()
+          // }}
+
+          onSubmit={async (values, { resetForm }) => {
+const success=  await signUp(values)
+if(success){
+
+  resetForm();
+  navigation.navigate('Tasks')
+  
+}
+    try {
+
+      await signUp(values); // send form values to API
+
+     
+
+    
+
+    } catch (error) {
+
+      Alert.alert('Error', 'Registration failed');
+
+    }
+
+  }}
         >
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
 

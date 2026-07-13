@@ -12,21 +12,32 @@ import {
   Text,
   TextInput,
   Button,
-  SegmentedButtons,
+  SegmentedButtons
 } from 'react-native-paper'
 
 import { useCreateTaskStyles } from './styles'
 import axios from 'axios'
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { Pressable} from "react-native";
+import { Calendar } from 'react-native-calendars';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../ReduxToolkit/store';
+
 
 
 
 const CreateTask = () => {
+    const accessToken = useSelector(
+  (state: RootState) => state.auth.accessToken
+);
+const refreshToken = useSelector(
+  (state:RootState)=>state.auth.refreshToken
+)
+useEffect(()=>{
 
-  const readData = async ()=>{
-  const response = await axios.get('https://todobackenefone.onrender.com/api/createtask/read')
-  console.log(response.data);
-}
+console.log("saad")
+console.log(accessToken);
+console.log(refreshToken)
+})
 
 const postData = async () => {
   try {
@@ -54,12 +65,6 @@ const postData = async () => {
 };
 
 
-useEffect(()=>{
-    readData()
-   
-    
-
-  },[])
   const styles = useCreateTaskStyles()
 
   const { width, height } = useWindowDimensions()
@@ -73,7 +78,7 @@ useEffect(()=>{
   dueDate: "",
   priority: "medium",
 });
-const [showDateTimePicker, setShowDateTimePicker]= useState(false)
+const [showCalendar, setShowCalendar] = useState(false);
   return (
     
     <KeyboardAvoidingView
@@ -84,31 +89,7 @@ const [showDateTimePicker, setShowDateTimePicker]= useState(false)
           : undefined
       }
     >
-      {showDateTimePicker && (
-  <DateTimePicker
-    value={
-      formData.dueDate
-        ? new Date(formData.dueDate)
-        : new Date()
-    }
-    mode="date"
-    display="default"
-    onChange={(event, selectedDate) => {
-      setShowDateTimePicker(false);
-
-      if (selectedDate) {
-        const formattedDate = selectedDate
-          .toISOString()
-          .split("T")[0];
-
-        setFormData({
-          ...formData,
-          dueDate: formattedDate,
-        });
-      }
-    }}
-  />
-)}
+    
       <ScrollView
         contentContainerStyle={
           styles.contentContainer
@@ -178,7 +159,7 @@ const [showDateTimePicker, setShowDateTimePicker]= useState(false)
                 styles.rightContainerLandscape,
             ]}
           >
-           <TextInput
+           {/* <TextInput
               label="Due Date"
               mode="outlined"
               value={formData.dueDate}
@@ -189,7 +170,45 @@ const [showDateTimePicker, setShowDateTimePicker]= useState(false)
                 <TextInput.Icon icon="calendar" />
               }
             /> 
-          
+          <Calendar
+  initialDate="2022-12-01"
+  minDate="2022-12-01"
+  maxDate="2023-01-30"
+  disableAllTouchEventsForDisabledDays={true}
+/> */}
+<Pressable onPress={() => setShowCalendar(true)}>
+
+  <View pointerEvents="none">
+
+    <TextInput
+
+      label="Due Date"
+
+      mode="outlined"
+
+      value={formData.dueDate}
+
+      editable={false}
+
+      left={<TextInput.Icon icon="calendar" />}
+
+    />
+
+  </View>
+
+</Pressable>
+{showCalendar && (
+  <Calendar
+    onDayPress={(day) => {
+      setFormData({
+        ...formData,
+        dueDate: day.dateString,
+      });
+
+      setShowCalendar(false);
+    }}
+  />
+)}
 
             <Text style={styles.label}>
               Priority

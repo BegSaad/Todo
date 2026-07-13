@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Alert } from "react-native";
 
 const useTasksApi = () => {
   const [tasks, setTasks] = useState([]);
@@ -7,7 +8,7 @@ const useTasksApi = () => {
  useEffect(() => {
   readTasks();
 }, []);
-
+  
   const readTasks = async () => {
     try {
       const response = await axios.get(
@@ -26,12 +27,14 @@ const useTasksApi = () => {
     }
   };
 
-  const deleteTask = (id: string) => {
+  const deleteTask = (id: any) => {
 
 try{
     axios.delete(`https://todobackenefone.onrender.com/api/createtask/delete/${id}`
+      
     );
-    // setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));  
+    Alert.alert("Success", "Task deleted successfully");
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));  
 }
 catch(error){
   console.log(error)

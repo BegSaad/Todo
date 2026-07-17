@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useEffect, useState } from "react";
 import {
   View,
   ScrollView,
@@ -6,252 +6,272 @@ import {
   Platform,
   Alert,
   useWindowDimensions,
-} from 'react-native'
+  Pressable,
+} from "react-native";
 
 import {
   Text,
   TextInput,
   Button,
-  SegmentedButtons
-} from 'react-native-paper'
+  SegmentedButtons,
+} from "react-native-paper";
 
-import { useCreateTaskStyles } from './styles'
-import axios from 'axios'
-import { Pressable} from "react-native";
-import { Calendar } from 'react-native-calendars';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../ReduxToolkit/store';
+import { Formik } from "formik";
+import axios from "axios";
+import { Calendar } from "react-native-calendars";
+import { useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-
-
+import { RootState } from "../../ReduxToolkit/store";
+import { RootParamList } from "../../utils/RootParamList";
+import { registerData } from "../../utils/validationSchema";
+import { useCreateTaskStyles } from "./styles";
 
 const CreateTask = () => {
-    const accessToken = useSelector(
-  (state: RootState) => state.auth.accessToken
-);
-const refreshToken = useSelector(
-  (state:RootState)=>state.auth.refreshToken
-)
-useEffect(()=>{
+  type NavigationProp = NativeStackNavigationProp<RootParamList>;
 
-console.log("saad")
-console.log(accessToken);
-console.log(refreshToken)
-})
+  const navigation = useNavigation<NavigationProp>();
+  const styles = useCreateTaskStyles();
 
-const postData = async () => {
-  try {
-    const response = await axios.post(
-      "https://todobackenefone.onrender.com/api/createtask/post",
-      {
-        taskName: formData.taskName,
-        taskDescription: formData.taskDescription   ,
-        dueDate: formData.dueDate,
-        priority: formData.priority,
-      }
-    );
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
 
-    console.log(response.data);
-    Alert.alert("Success", "Task created successfully");
-     setFormData({
-      taskName: "",
-      taskDescription: "",
-      dueDate: "",
-      priority: "medium",
-    });
-  } catch (error:any) {
-    console.log(error.response?.data);
-  }
-};
+  const [showCalendar, setShowCalendar] = useState(false);
 
+  const accessToken = useSelector(
+    (state: RootState) => state.auth.accessToken
+  );
 
-  const styles = useCreateTaskStyles()
+  const refreshToken = useSelector(
+    (state: RootState) => state.auth.refreshToken
+  );
 
-  const { width, height } = useWindowDimensions()
-  const isLandscape = width > height
+  useEffect(() => {
+    console.log("Access Token:", accessToken);
+    console.log("Refresh Token:", refreshToken);
+  }, [accessToken, refreshToken]);
 
-  
-
-  const [formData, setFormData] = useState({
-  taskName: "",
-  taskDescription: "",
-  dueDate: "",
-  priority: "medium",
-});
-const [showCalendar, setShowCalendar] = useState(false);
   return (
-    
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={
-        Platform.OS === 'ios'
-          ? 'padding'
-          : undefined
-      }
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-    
       <ScrollView
-        contentContainerStyle={
-          styles.contentContainer
-        }
+        contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View
-          style={
-            isLandscape
-              ? styles.landscapeWrapper
-              : undefined
-          }
+        <Formik
+          initialValues={{
+            taskName: "",
+            taskDescription: "",
+            dueDate: "",
+            priority: "medium",
+          }}
+          validationSchema={registerData}
+          onSubmit={async (values, { resetForm }) => {
+            try {
+              const response = await axios.post(
+                "https://todobackenefone.onrender.com/api/createtask/post",
+                values,
+                {
+                  headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                  },
+                }
+              );
+
+              console.log(response.data);
+
+              Alert.alert(
+                "Success",
+                "Task created successfully"
+              );
+
+              resetForm();
+
+              navigation.goBack();
+            } catch (error: any) {
+              console.log(error?.response?.data);
+
+              Alert.alert(
+                "Error",
+                error?.response?.data?.message ||
+                  "Something went wrong"
+              );
+            }
+          }}
         >
-          {/* LEFT SECTION */}
-          <View
-            style={[
-              styles.leftContainer,
-              isLandscape &&
-                styles.leftContainerLandscape,
-            ]}
-          >
-            <Text style={styles.heading}>
-              Create Task
-            </Text>
-
-            <TextInput
-              label="Task Title"
-              mode="outlined"
-              value={formData.taskName    }
-              onChangeText={(text) => setFormData({...formData, taskName: text})}
-              style={styles.input}
-              left={
-                <TextInput.Icon icon="format-title" />
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+            setFieldValue,
+          }) => (
+            <View
+              style={
+                isLandscape
+                  ? styles.landscapeWrapper
+                  : undefined
               }
-            />
+            >
+              {/* LEFT SECTION */}
+              <View
+                style={[
+                  styles.leftContainer,
+                  isLandscape &&
+                    styles.leftContainerLandscape,
+                ]}
+              >
+                <Text style={styles.heading}>
+                  Create Task
+                </Text>
 
-            <TextInput
-              label="Task Description"
-              mode="outlined"
-              value={formData.taskDescription}
-              onChangeText={(text) => setFormData({...formData, taskDescription: text})}
-              multiline
-              numberOfLines={6}
-              style={styles.descriptionInput}
-              left={
-                <TextInput.Icon icon="text-box-outline" />
-              }
-              right={
-                <TextInput.Icon
-                  icon="microphone-outline"
-                  onPress={() =>
-                    console.log(
-                      'Speech recognition'
-                    )
+                <TextInput
+                  label="Task Title"
+                  mode="outlined"
+                  style={styles.input}
+                  value={values.taskName}
+                  onChangeText={handleChange(
+                    "taskName"
+                  )}
+                  onBlur={handleBlur("taskName")}
+                  left={
+                    <TextInput.Icon
+                      icon="format-title"
+                    />
                   }
                 />
-              }
-            />
-          </View>
 
-          {/* RIGHT SECTION */}
-          <View
-            style={[
-              styles.rightContainer,
-              isLandscape &&
-                styles.rightContainerLandscape,
-            ]}
-          >
-           {/* <TextInput
-              label="Due Date"
-              mode="outlined"
-              value={formData.dueDate}
-              onChangeText={(text) => setFormData({...formData, dueDate: text})}
-              placeholder="DD/MM/YYYY"
-              style={styles.input}
-              left={
-                <TextInput.Icon icon="calendar" />
-              }
-            /> 
-          <Calendar
-  initialDate="2022-12-01"
-  minDate="2022-12-01"
-  maxDate="2023-01-30"
-  disableAllTouchEventsForDisabledDays={true}
-/> */}
-<Pressable onPress={() => setShowCalendar(true)}>
+                {touched.taskName &&
+                  errors.taskName && (
+                    <Text style={{ color: "red" }}>
+                      {errors.taskName}
+                    </Text>
+                  )}
 
-  <View pointerEvents="none">
+                <TextInput
+                  label="Task Description"
+                  mode="outlined"
+                  multiline
+                  numberOfLines={5}
+                  style={styles.descriptionInput}
+                  value={values.taskDescription}
+                  onChangeText={handleChange(
+                    "taskDescription"
+                  )}
+                  onBlur={handleBlur(
+                    "taskDescription"
+                  )}
+                  left={
+                    <TextInput.Icon
+                      icon="text-box-outline"
+                    />
+                  }
+                />
 
-    <TextInput
+                {touched.taskDescription &&
+                  errors.taskDescription && (
+                    <Text style={{ color: "red" }}>
+                      {errors.taskDescription}
+                    </Text>
+                  )}
+              </View>
 
-      label="Due Date"
+              {/* RIGHT SECTION */}
+              <View
+                style={[
+                  styles.rightContainer,
+                  isLandscape &&
+                    styles.rightContainerLandscape,
+                ]}
+              >
+                <Pressable
+                  onPress={() =>
+                    setShowCalendar(true)
+                  }
+                >
+                  <View pointerEvents="none">
+                    <TextInput
+                      label="Due Date"
+                      mode="outlined"
+                      value={values.dueDate}
+                      editable={false}
+                      left={
+                        <TextInput.Icon icon="calendar" />
+                      }
+                    />
+                  </View>
+                </Pressable>
 
-      mode="outlined"
+                {touched.dueDate &&
+                  errors.dueDate && (
+                    <Text style={{ color: "red" }}>
+                      {errors.dueDate}
+                    </Text>
+                  )}
 
-      value={formData.dueDate}
+                {showCalendar && (
+                  <Calendar
+                    onDayPress={(day) => {
+                      setFieldValue(
+                        "dueDate",
+                        day.dateString
+                      );
+                      setShowCalendar(false);
+                    }}
+                  />
+                )}
 
-      editable={false}
+                <Text style={styles.label}>
+                  Priority
+                </Text>
 
-      left={<TextInput.Icon icon="calendar" />}
+                <SegmentedButtons
+                  value={values.priority}
+                  onValueChange={(value) =>
+                    setFieldValue(
+                      "priority",
+                      value
+                    )
+                  }
+                  buttons={[
+                    {
+                      value: "low",
+                      label: "Low",
+                    },
+                    {
+                      value: "medium",
+                      label: "Medium",
+                    },
+                    {
+                      value: "high",
+                      label: "High",
+                    },
+                  ]}
+                />
 
-    />
-
-  </View>
-
-</Pressable>
-{showCalendar && (
-  <Calendar
-    onDayPress={(day) => {
-      setFormData({
-        ...formData,
-        dueDate: day.dateString,
-      });
-
-      setShowCalendar(false);
-    }}
-  />
-)}
-
-            <Text style={styles.label}>
-              Priority
-            </Text>
-
-            <SegmentedButtons
-              value={formData.priority}
-              onValueChange={(value) => setFormData({...formData, priority: value})}
-              buttons={[
-                {
-                  value: 'low',
-                  label: 'Low',
-                },
-                {
-                  value: 'medium',
-                  label: 'Medium',
-                },
-                {
-                  value: 'high',
-                  label: 'High',
-                },
-              ]}
-            />
-
-            <Button
-              mode="contained"
-              style={styles.createBtn}
-              contentStyle={styles.btnContent}
-              onPress={() => {
-                postData()
-                console.log("button is pressed")
-            
-              }}
-            >
-              Create Task
-            </Button>
-          </View>
-        </View>
+                <Button
+                  mode="contained"
+                  style={styles.createBtn}
+                  contentStyle={
+                    styles.btnContent
+                  }
+                  onPress={() => handleSubmit()}
+                >
+                  Create Task
+                </Button>
+              </View>
+            </View>
+          )}
+        </Formik>
       </ScrollView>
     </KeyboardAvoidingView>
-    
-  )
-  
-}
+  );
+};
 
-export default CreateTask
+export default CreateTask;

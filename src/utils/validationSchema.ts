@@ -1,6 +1,6 @@
 import * as yup from 'yup'
 
-const validationSchema = yup.object().shape({
+export const validationSchema = yup.object().shape({
   name: yup
     .string()
     .required('Name is required'),
@@ -20,5 +20,34 @@ const validationSchema = yup.object().shape({
     .oneOf([yup.ref('password')], 'Passwords must match')
     .required('Confirm Password is required'),
 })
+export const registerData = yup.object().shape({
 
-export default validationSchema
+  taskName: yup
+
+    .string()
+
+    .required("Task name is required"),
+
+  taskDescription: yup
+
+    .string()
+
+    .required("Task description is required")
+
+    .min(10, "Description should be at least 10 characters"),
+
+  dueDate: yup
+
+    .string()
+
+    .required("Due date is required"),
+
+  priority: yup
+
+    .string()
+
+    .oneOf(["low", "medium", "high"])
+
+    .required("Priority is required"),
+
+});

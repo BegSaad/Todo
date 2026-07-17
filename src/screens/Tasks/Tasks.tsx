@@ -7,6 +7,7 @@ import {
   Platform,
   useWindowDimensions,
   TouchableOpacity,
+  ActivityIndicator
 } from 'react-native'
 import {
   Text,
@@ -23,12 +24,16 @@ import useTasksApi from './useTasksApi'
 import { useTasksStyles } from './styles'
 import axios from 'axios'
 
+import { RootState } from '../../ReduxToolkit/store';
+
+
+
 const Tasks = () => {
   type NavigationProp = NativeStackNavigationProp<RootParamList>
 
   const navigation = useNavigation<NavigationProp>()
 
-  const { tasks , deleteTask} = useTasksApi()
+  const { tasks , deleteTask,editTask,loading} = useTasksApi()
 
   const { width, height } = useWindowDimensions()
   const isLandscape = width > height
@@ -39,9 +44,8 @@ const Tasks = () => {
   
 
   const renderTask = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      
-    >
+    <TouchableOpacity>
+
       <Card style={styles.card}>
         <Card.Content style={styles.cardContent}>
           <View style={styles.textContainer}>
@@ -55,7 +59,17 @@ const Tasks = () => {
             >
               {item.description}
             </Text>
+             <Text
+              variant="bodyMedium"
+              style={styles.description}
+            >
+              {item.priority}
+            </Text>
           </View>
+          <IconButton
+            icon="pencil"
+            onPress={() => editTask(item.id)}
+          />
 
           <IconButton
             icon="delete-outline"
@@ -98,8 +112,9 @@ const Tasks = () => {
             <Text style={styles.title}>
               My Tasks
             </Text>
-
-            {tasks.length === 0 ? (
+{loading?
+<ActivityIndicator/>
+          :  tasks.length === 0 ? (
               <View style={styles.emptyContainer}>
                 <AntDesign
                   name="questioncircleo"
@@ -121,6 +136,7 @@ const Tasks = () => {
                 renderItem={renderTask}
               />
             )}
+          
           </View>
         </View>
       </ScrollView>
@@ -130,6 +146,13 @@ const Tasks = () => {
         style={styles.fab}
         onPress={() =>
           navigation.navigate('CreateTask')
+        }
+      />
+        <FAB
+        icon="account"
+        style={styles.fabOne}
+        onPress={() =>
+          navigation.navigate('Account')
         }
       />
     </KeyboardAvoidingView>

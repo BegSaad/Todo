@@ -17,6 +17,7 @@ import { useLoginStyles } from './styles'
 import { RootParamList } from '../../utils/RootParamList'
 
 const Login = () => {
+  const [securePassword, setSecurePassword] = useState(true);
   type NavigationProp = NativeStackNavigationProp<RootParamList>
   const navigation = useNavigation<NavigationProp>()
   const [email, setEmail] = useState('')
@@ -64,8 +65,14 @@ const Login = () => {
               value={password}
               onChangeText={setPassword}
               style={styles.input}
-              secureTextEntry
+              secureTextEntry={securePassword}
               left={<TextInput.Icon icon="lock-outline" />}
+                right={
+                    <TextInput.Icon
+                      icon={securePassword ? 'eye-off' : 'eye'}
+                      onPress={() => setSecurePassword(!securePassword)}
+                    />
+                  }
             />
 
             <Button

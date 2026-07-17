@@ -1,16 +1,17 @@
-import React from 'react'
+import React, {useState}from 'react'
 import { View, Alert, useWindowDimensions, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
 import { TextInput, Button, HelperText, Text } from 'react-native-paper'
 import { Formik } from 'formik'
 import { useSignUpStyles } from './styles'
-import validationSchema from '../../utils/validationSchema'
+import {validationSchema} from '../../utils/validationSchema'
 import useSignUpApi from './useSignUpApi'
 
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootParamList } from '../../utils/RootParamList'
 const Signup = () => {
-  
+  const [securePassword, setSecurePassword] = useState(true);
+const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
   
   
  type NavigationProp = NativeStackNavigationProp<RootParamList>
@@ -34,11 +35,7 @@ const Signup = () => {
         <Formik
           initialValues={{ name: '', email: '', password: '', confirmPassword: '' }}
           validationSchema={validationSchema}
-          // onSubmit={(values, { resetForm }) => {
-          //   console.log(values)
-          //   Alert.alert('Success', 'Registration Successful')
-          //   resetForm()
-          // }}
+        
 
           onSubmit={async (values, { resetForm }) => {
 const success=  await signUp(values)
@@ -101,55 +98,75 @@ if(success){
                     keyboardType="email-address"
                     autoCapitalize="none"
                   />
-                  <HelperText type="error" visible={!!(touched.email && errors.email)}>
-                    {errors.email}
-                  </HelperText>
+                  
 
                 </View>
 
                 {/* RIGHT / BOTTOM — Password + Confirm + Register */}
                 <View style={isLandscape ? styles.bottomContainerLandscape : styles.bottomContainer}>
 
-                  <TextInput
-                    label="Password"
-                    mode="outlined"
-                    theme={{ roundness: 10 }} 
-                    style={styles.input}
-                    onChangeText={handleChange('password')}
-                    onBlur={handleBlur('password')}
-                    value={values.password}
-                    error={!!(touched.password && errors.password)}
-                    secureTextEntry
-                  />
-                  <HelperText type="error" visible={!!(touched.password && errors.password)}>
-                    {errors.password}
-                  </HelperText>
+  <TextInput
+    label="Password"
+    mode="outlined"
+    theme={{ roundness: 10 }}
+    style={styles.input}
+    onChangeText={handleChange('password')}
+    onBlur={handleBlur('password')}
+    value={values.password}
+    error={!!(touched.password && errors.password)}
+    secureTextEntry={securePassword}
+    right={
+      <TextInput.Icon
+        icon={securePassword ? 'eye-off' : 'eye'}
+        onPress={() => setSecurePassword(!securePassword)}
+      />
+    }
+  />
 
-                  <TextInput
-                    label="Confirm Password"
-                    mode="outlined"
-                    theme={{ roundness: 10 }} 
-                    style={styles.input}
-                    onChangeText={handleChange('confirmPassword')}
-                    onBlur={handleBlur('confirmPassword')}
-                    value={values.confirmPassword}
-                    error={!!(touched.confirmPassword && errors.confirmPassword)}
-                    secureTextEntry
-                  />
-                  <HelperText type="error" visible={!!(touched.confirmPassword && errors.confirmPassword)}>
-                    {errors.confirmPassword}
-                  </HelperText>
+  <HelperText
+    type="error"
+    visible={!!(touched.password && errors.password)}
+  >
+    {errors.password}
+  </HelperText>
 
-                  <Button
-                    mode="contained"
-                    style={styles.loginBtn}
-                    contentStyle={styles.btnContent}
-                    onPress={handleSubmit}
-                  >
-                    Register
-                  </Button>
+  <TextInput
+    label="Confirm Password"
+    mode="outlined"
+    theme={{ roundness: 10 }}
+    style={styles.input}
+    onChangeText={handleChange('confirmPassword')}
+    onBlur={handleBlur('confirmPassword')}
+    value={values.confirmPassword}
+    error={!!(touched.confirmPassword && errors.confirmPassword)}
+    secureTextEntry={secureConfirmPassword}
+    right={
+      <TextInput.Icon
+        icon={secureConfirmPassword ? 'eye-off' : 'eye'}
+        onPress={() =>
+          setSecureConfirmPassword(!secureConfirmPassword)
+        }
+      />
+    }
+  />
 
-                </View>
+  <HelperText
+    type="error"
+    visible={!!(touched.confirmPassword && errors.confirmPassword)}
+  >
+    {errors.confirmPassword}
+  </HelperText>
+
+  <Button
+    mode="contained"
+    style={styles.loginBtn}
+    contentStyle={styles.btnContent}
+    onPress={handleSubmit}
+  >
+    Register
+  </Button>
+
+</View>
 
               </View>
             </View>

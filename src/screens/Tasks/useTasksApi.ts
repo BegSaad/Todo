@@ -1,16 +1,36 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { Alert,ActivityIndicator } from "react-native";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+
+
+import { useNavigation } from '@react-navigation/native'
+import { RootParamList } from '../../utils/RootParamList'
+import { useIsFocused } from '@react-navigation/native';
+
 
 const useTasksApi = () => {
+const isFocused = useIsFocused();
+   type NavigationProp = NativeStackNavigationProp<RootParamList>
+    const navigation = useNavigation<NavigationProp>()
   const [tasks, setTasks] = useState([]);
+  const [loading,setLoading]= useState(false)
 
- useEffect(() => {
-  readTasks();
-}, []);
+useEffect(() => {
+
+  if (isFocused) {
+
+    readTasks();
+
+  }
+
+}, [isFocused]);
   
   const readTasks = async () => {
     try {
+
+setLoading(true)
+
       const response = await axios.get(
         "https://todobackenefone.onrender.com/api/createtask/read"
       );
@@ -19,20 +39,24 @@ const useTasksApi = () => {
         id: task._id,
         title: task.taskName,
         description: task.taskDescription,
+        priority:task.priority
       }));
 
       setTasks(formattedTasks);
+      
     } catch (error) {
       console.log(error);
+    }finally {
+
+      setLoading(false);
+
     }
   };
 
   const deleteTask = (id: any) => {
 
 try{
-    axios.delete(`https://todobackenefone.onrender.com/api/createtask/delete/${id}`
-      
-    );
+    axios.delete(`https://todobackenefone.onrender.com/api/createtask/delete/${id}`);
     Alert.alert("Success", "Task deleted successfully");
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));  
 }
@@ -41,9 +65,31 @@ catch(error){
 }
   };
 
+  const editTask= async(id:any)=>{
+
+    navigation.navigate('CreateTask')
+    // try{
+    //   const response = await axios.put(
+    //   "https://todobackenefone.onrender.com/api/createtask/update",
+    //   {
+    //     taskName,
+    //     taskDescription ,
+    //     dueDate
+    //     priority,
+    //   }
+    // );
+
+    // }catch(e){
+
+    // }
+
+  }
+
   return {
     tasks,
     deleteTask,
+    editTask,
+    loading
   };
 };
 

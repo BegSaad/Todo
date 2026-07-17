@@ -92,5 +92,10 @@ export const useTasksStyles = () => {
       right: 20,
       bottom: 20,
     },
+    fabOne: {
+      position: 'absolute',
+      left: 20,
+      bottom: 20,
+    },
   })
 }

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Alert,ActivityIndicator } from "react-native";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native'
 import { RootParamList } from '../../utils/RootParamList'
 import { useIsFocused } from '@react-navigation/native';
@@ -21,11 +21,23 @@ useEffect(() => {
   if (isFocused) {
 
     readTasks();
+    getname()
 
   }
 
 }, [isFocused]);
-  
+const [name, setName] = useState("");
+ const getname = async () => {
+  try {
+    const storedName = await AsyncStorage.getItem("name");
+
+    if (storedName) {
+      setName(storedName);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
   const readTasks = async () => {
     try {
 
@@ -89,7 +101,8 @@ catch(error){
     tasks,
     deleteTask,
     editTask,
-    loading
+    loading,
+    name
   };
 };
 

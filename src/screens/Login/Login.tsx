@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   ScrollView,
   View,
@@ -15,15 +15,40 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useLoginStyles } from './styles'
 import { RootParamList } from '../../utils/RootParamList'
-
+import axios from 'axios'
+import { useIsFocused } from '@react-navigation/native';
 const Login = () => {
+  const isFocused = useIsFocused();
   const [securePassword, setSecurePassword] = useState(true);
   type NavigationProp = NativeStackNavigationProp<RootParamList>
   const navigation = useNavigation<NavigationProp>()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [Email, setEmail] = useState('')
+  const [Password, setPassword] = useState('')
+  const [loading,setLoading]=useState(false)
+const loginPressed=async()=>{
+  setLoading(true)
+  try{
+    const response:any= await axios.post( "https://todobackenefone.onrender.com/api/auth/login",
+      {
+Email,
+Password
+      }
+    )
+    console.log("login response",JSON.stringify(response,null,2))
+                 navigation.navigate('Tasks')
+              
 
-  // ✅ Triggers re-render on rotation
+  }
+  catch(e){
+console.log(e)
+  }
+  finally{
+    setLoading(false)
+  }
+              
+}
+
+
   const { width, height } = useWindowDimensions()
   const isLandscape = width > height
 
@@ -40,18 +65,16 @@ const Login = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* ── LANDSCAPE: side-by-side layout ─────────────────────── */}
-        {/* ── PORTRAIT: stacked layout (default) ─────────────────── */}
         <View style={isLandscape ? styles.landscapeWrapper : null}>
 
           {/* TOP SECTION */}
           <View style={[styles.topContainer, isLandscape && styles.topContainerLandscape]}>
-            <Text style={styles.logo}>TODO</Text>
+            <Text style={styles.logo}>DOTOIST</Text>
 
             <TextInput
               label="Email"
               mode="outlined"
-              value={email}
+              value={Email}
               onChangeText={setEmail}
               style={styles.input}
               keyboardType="email-address"
@@ -62,7 +85,7 @@ const Login = () => {
             <TextInput
               label="Password"
               mode="outlined"
-              value={password}
+              value={Password}
               onChangeText={setPassword}
               style={styles.input}
               secureTextEntry={securePassword}
@@ -79,11 +102,11 @@ const Login = () => {
               mode="contained"
               style={styles.loginBtn}
               contentStyle={styles.btnContent}
-              onPress={() => {navigation.navigate('Tasks')
-                console.log('Login pressed with:', { email, password })
-              }}
+              onPress={loginPressed}
+                loading={loading}
+                disabled={loading}
             >
-              Login
+               {loading?'Logging In..':'Login'}
             </Button>
 
             <Button
@@ -102,37 +125,17 @@ const Login = () => {
               <Button
                 mode="text"
                 onPress={() => navigation.navigate('Signup')}
+              
               >
-                Sign Up
+           Sign Up
               </Button>
             </View>
 
-            <Button
-              mode="outlined"
-              icon="google"
-              style={styles.socialBtn}
-              onPress={() => {}}
-            >
-              Continue with Google
-            </Button>
+           
 
-            <Button
-              mode="outlined"
-              icon="email-outline"
-              style={styles.socialBtn}
-              onPress={() => {}}
-            >
-              Continue with Email
-            </Button>
+         
 
-            <Button
-              mode="outlined"
-              icon="github"
-              style={styles.socialBtn}
-              onPress={() => {}}
-            >
-              Continue with GitHub
-            </Button>
+         
           </View>
 
         </View>

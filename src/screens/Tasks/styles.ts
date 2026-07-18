@@ -72,6 +72,12 @@ export const useTasksStyles = () => {
       marginTop: verticalScale(4),
       color: '#666',
     },
+     descriptionname: {
+      marginTop: verticalScale(4),
+      marginBottom:verticalScale(10),
+      fontSize:textScale(18),
+      color: '#121cde',
+    },
 
     emptyContainer: {
       flex: 1,

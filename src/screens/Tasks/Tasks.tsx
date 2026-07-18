@@ -18,7 +18,7 @@ import { FAB } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-
+import { useSelector } from 'react-redux';
 import { RootParamList } from '../../utils/RootParamList'
 import useTasksApi from './useTasksApi'
 import { useTasksStyles } from './styles'
@@ -30,10 +30,14 @@ import { RootState } from '../../ReduxToolkit/store';
 
 const Tasks = () => {
   type NavigationProp = NativeStackNavigationProp<RootParamList>
+  // const name = useSelector(
 
+  //   (state: any) => state?.userSlice?.name
+
+  // );
   const navigation = useNavigation<NavigationProp>()
 
-  const { tasks , deleteTask,editTask,loading} = useTasksApi()
+  const { tasks , deleteTask,editTask,loading,name} = useTasksApi()
 
   const { width, height } = useWindowDimensions()
   const isLandscape = width > height
@@ -111,6 +115,9 @@ const Tasks = () => {
           >
             <Text style={styles.title}>
               My Tasks
+            </Text>
+            <Text style={styles.descriptionname}>
+     Welcome {name}
             </Text>
 {loading?
 <ActivityIndicator/>

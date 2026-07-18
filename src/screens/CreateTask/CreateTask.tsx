@@ -6,9 +6,10 @@ import {
   Platform,
   Alert,
   useWindowDimensions,
+  ActivityIndicator,
   Pressable,
 } from "react-native";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Text,
   TextInput,
@@ -38,6 +39,7 @@ const CreateTask = () => {
   const isLandscape = width > height;
 
   const [showCalendar, setShowCalendar] = useState(false);
+  const[loading,setLoading]=useState(false);
 
   const accessToken = useSelector(
     (state: RootState) => state.auth.accessToken
@@ -46,10 +48,20 @@ const CreateTask = () => {
   const refreshToken = useSelector(
     (state: RootState) => state.auth.refreshToken
   );
+useEffect(() => {
+    const getToken = async () => {
+        const token = await AsyncStorage.getItem(
+            "accessToken"
+        );
 
+        console.log("Token from AsyncStorage:", token);
+    };
+
+    getToken();
+}, []);
   useEffect(() => {
-    console.log("Access Token:", accessToken);
-    console.log("Refresh Token:", refreshToken);
+    console.log("Access Token: task", accessToken);
+    console.log("Refresh Token:saad", refreshToken);
   }, [accessToken, refreshToken]);
 
   return (
@@ -71,6 +83,7 @@ const CreateTask = () => {
           }}
           validationSchema={registerData}
           onSubmit={async (values, { resetForm }) => {
+            setLoading(true)
             try {
               const response = await axios.post(
                 "https://todobackenefone.onrender.com/api/createtask/post",
@@ -100,6 +113,9 @@ const CreateTask = () => {
                 error?.response?.data?.message ||
                   "Something went wrong"
               );
+            }
+            finally{
+              setLoading(false)
             }
           }}
         >
@@ -262,8 +278,11 @@ const CreateTask = () => {
                     styles.btnContent
                   }
                   onPress={() => handleSubmit()}
+                  disabled={loading}
+                  loading={loading}
                 >
-                  Create Task
+
+               { loading? 'CreatingTask':  'Create Task'}
                 </Button>
               </View>
             </View>

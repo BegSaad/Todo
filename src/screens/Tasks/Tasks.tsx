@@ -30,11 +30,11 @@ import { RootState } from '../../ReduxToolkit/store';
 
 const Tasks = () => {
   type NavigationProp = NativeStackNavigationProp<RootParamList>
-  // const name = useSelector(
+  const nameis = useSelector(
 
-  //   (state: any) => state?.userSlice?.name
+    (state: any) => state?.userSlice?.name
 
-  // );
+  );
   const navigation = useNavigation<NavigationProp>()
 
   const { tasks , deleteTask,editTask,loading,name} = useTasksApi()
@@ -117,7 +117,7 @@ const Tasks = () => {
               My Tasks
             </Text>
             <Text style={styles.descriptionname}>
-     Welcome {name}
+     Welcome {nameis}
             </Text>
 {loading?
 <ActivityIndicator/>

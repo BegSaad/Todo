@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native'
 import { RootParamList } from '../../utils/RootParamList'
 import { useIsFocused } from '@react-navigation/native';
-
+import api from "../../services/axiosInstancs";
 
 const useTasksApi = () => {
 const isFocused = useIsFocused();
@@ -43,9 +43,7 @@ const [name, setName] = useState("");
 
 setLoading(true)
 
-      const response = await axios.get(
-        "https://todobackenefone.onrender.com/api/createtask/read"
-      );
+     const response = await api.get("/createtask/read");
 
       const formattedTasks = response.data.data.map((task: any) => ({
         id: task._id,

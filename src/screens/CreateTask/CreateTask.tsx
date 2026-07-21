@@ -16,6 +16,7 @@ import {
   Button,
   SegmentedButtons,
 } from "react-native-paper";
+import api from "../../services/axiosInstancs";
 
 import { Formik } from "formik";
 import axios from "axios";
@@ -85,15 +86,13 @@ useEffect(() => {
           onSubmit={async (values, { resetForm }) => {
             setLoading(true)
             try {
-              const response = await axios.post(
-                "https://todobackenefone.onrender.com/api/createtask/post",
-                values,
-                {
-                  headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                  },
-                }
-              );
+             const response = await api.post(
+
+    "/createtask/post",
+
+    values
+
+);
 
               console.log(response.data);
 

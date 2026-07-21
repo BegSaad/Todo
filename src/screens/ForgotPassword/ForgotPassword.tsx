@@ -1,29 +1,41 @@
-import {  Text, View ,TextInput} from 'react-native'
-import React from 'react'
-import styles from './styles'
-import useForgotPasswordApi from './useForgotPasswordApi'
-const ForgotPassword = async() => {
-    await useForgotPasswordApi
+import React from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { useForgotPasswordStyles } from './styles';
+import useForgotPasswordApi from './useForgotPasswordApi';
+
+const ForgotPassword = () => {
+  const styles = useForgotPasswordStyles();
+
+  const { email, setEmail, forgotPassword} = useForgotPasswordApi();
+
   return (
-   <View>
+    <View style={styles.container}>
+      <View style={styles.contentContainer}>
+        <View style={styles.card}>
+          <Text style={styles.heading}>Forgot Password</Text>
 
-    <View>
-        <Text>
-            Forgot Password
-        </Text>
-        <View>
-        <Text>
-            Please Enter your registered Email
-        </Text>
-        <TextInput>
+          <Text style={styles.subHeading}>
+            Please enter your registered email address.
+          </Text>
 
-        </TextInput>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={forgotPassword}>
+            <Text style={styles.buttonText}>Send Reset Link</Text>
+          </TouchableOpacity>
         </View>
+      </View>
     </View>
-    
-   </View>
-  )
-}
+  );
+};
 
-export default ForgotPassword
-
+export default ForgotPassword;

@@ -9,6 +9,7 @@ import useNetInfo  from './src/nethook/useNetInfo'
 import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
  import store from './src/ReduxToolkit/store'
+ import MainRoot from './src/navigation'
 
 const App = () => {
   const netInfo = useNetInfo()
@@ -27,8 +28,7 @@ const App = () => {
           </View>
         )}
      <NavigationContainer>
-
-    <MyStack />
+<MainRoot/>
     </NavigationContainer>
     </SafeAreaProvider>
 

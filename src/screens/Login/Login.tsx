@@ -67,7 +67,7 @@ await AsyncStorage.setItem(
    
     console.log("login response",JSON.stringify(response,null,2))
 
-                 navigation.navigate('Tasks')
+            navigation.navigate('Mystack');
 } 
 
   }
@@ -148,7 +148,9 @@ if(status===404){
 
             <Button
               mode="text"
-              onPress={() => {}}
+              onPress={() => {
+                 navigation.navigate('ForgotPassword')
+              }}
               labelStyle={styles.forgotText}
             >
               Forgot Password?

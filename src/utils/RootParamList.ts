@@ -3,5 +3,9 @@ export type RootParamList = {
     Signup: undefined;
     CreateTask:undefined;
     Tasks:undefined;
-    Account:undefined
+    Account:undefined,
+    SplashAction:undefined,
+    ForgotPassword:undefined,
+    authStack:undefined,
+    Mystack:undefined
 }

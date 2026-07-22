@@ -1,4 +1,4 @@
-import React from 'react';
+import React ,{useState}from 'react';
 import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
@@ -11,6 +11,20 @@ import { clearTokens } from '../../ReduxToolkit/slices/Auth.slice';
 import { clearName } from '../../ReduxToolkit/slices/name.slice';
 
 const Account = () => {
+  const [name, setName] = useState("");
+ const getname = async () => {
+  try {
+    const storedName = await AsyncStorage.getItem("name");
+
+
+    if (storedName) {
+      setName(storedName);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+console.log(name)
   const styles = useAccountStyles();
 
   type NavigationProp = NativeStackNavigationProp<RootParamList>;
@@ -47,7 +61,7 @@ const Account = () => {
       <View style={styles.card}>
         <Text style={styles.emoji}>👤</Text>
 
-        <Text style={styles.heading}>Hey User</Text>
+        <Text style={styles.heading}>Hey {name}</Text>
 
         <Text style={styles.subHeading}>
           Are you sure you want to logout from your account?

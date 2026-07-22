@@ -70,10 +70,10 @@ const Tasks = () => {
               {item.priority}
             </Text>
           </View>
-          <IconButton
+          {/* <IconButton
             icon="pencil"
             onPress={() => editTask(item.id)}
-          />
+          /> */}
 
           <IconButton
             icon="delete-outline"

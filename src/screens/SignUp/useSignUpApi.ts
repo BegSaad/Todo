@@ -5,9 +5,13 @@ import { setToken } from '../../ReduxToolkit/slices/Auth.slice'
 import { setName } from '../../ReduxToolkit/slices/name.slice'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Alert} from 'react-native'
-
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootParamList } from '../../utils/RootParamList'
+import { useNavigation } from '@react-navigation/native'
 const useSignUpApi = () => { 
     const dispatch= useDispatch() 
+     type NavigationProp = NativeStackNavigationProp<RootParamList>
+      const navigation = useNavigation<NavigationProp>()
     const [loading,setLoading]= useState(false) 
 const signUp = async (values: any) => {
 setLoading(true)
@@ -36,11 +40,8 @@ name:response?.data?.user?.name
 
       
       await AsyncStorage.setItem(
-
   "accessToken",
-
   response.data.accessToken
-
 );
 
 await AsyncStorage.setItem(
@@ -58,6 +59,7 @@ await AsyncStorage.setItem(
   response.data.user.name
 
 );
+ navigation.navigate('Mystack');
       console.log("response is", response.data);
       console.log("access token", response.data.accessToken);
       console.log("refresh token",response?.data?.refreshToken);

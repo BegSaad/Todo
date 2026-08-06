@@ -25,16 +25,19 @@ import { useTasksStyles } from './styles'
 import axios from 'axios'
 
 import { RootState } from '../../ReduxToolkit/store';
+import { AsyncStorage } from '@react-native-async-storage/async-storage'
 
 
 
-const Tasks = () => {
+const Tasks = async () => {
   type NavigationProp = NativeStackNavigationProp<RootParamList>
+ 
   const nameis = useSelector(
 
     (state: any) => state?.userSlice?.name
 
   );
+  console.log("name is",nameis)
   const navigation = useNavigation<NavigationProp>()
 
   const { tasks , deleteTask,editTask,loading,name} = useTasksApi()

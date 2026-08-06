@@ -63,18 +63,35 @@ setLoading(true)
     }
   };
 
-  const deleteTask = (id: any) => {
+//   const deleteTask = (id: any) => {
 
-try{
-    axios.delete(`https://todobackenefone.onrender.com/api/createtask/delete/${id}`);
-    Alert.alert("Success", "Task deleted successfully");
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));  
-}
-catch(error){
-  console.log(error)
-}
-  };
+// try{
+//     axios.delete(`https://todobackenefone.onrender.com/api/createtask/delete/${id}`);
+//     Alert.alert("Success", "Task deleted successfully");
+//     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));  
+// }
+// catch(error){
+//   console.log(error)
+// }
+//   };
+const deleteTask = async (id: string) => {
+  try {
+    const response = await api.delete(`/createtask/delete/${id}`);
 
+    Alert.alert("Success", response.data.message);
+
+    setTasks((prevTasks) =>
+      prevTasks.filter((task: any) => task.id !== id)
+    );
+  } catch (error: any) {
+    console.log(error.response?.data || error.message);
+
+    Alert.alert(
+      "Error",
+      error.response?.data?.message || "Failed to delete task"
+    );
+  }
+};
   const editTask= async(id:any)=>{
 
     navigation.navigate('CreateTask')
